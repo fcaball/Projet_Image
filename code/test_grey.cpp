@@ -9,14 +9,14 @@ std::vector<OCTET *> base; // base de donnees
 std::vector<double> m;     // moyenne
 std::vector<double> v;     // variance
 
-std::vector<double> mR;     // moyenne
-std::vector<double> vR;     // variance
+std::vector<double> mR; // moyenne
+std::vector<double> vR; // variance
 
-std::vector<double> mV;     // moyenne
-std::vector<double> vV;     // variance
+std::vector<double> mV; // moyenne
+std::vector<double> vV; // variance
 
-std::vector<double> mB;     // moyenne
-std::vector<double> vB;     // variance
+std::vector<double> mB; // moyenne
+std::vector<double> vB; // variance
 
 double moy(OCTET *Image, int taille)
 {
@@ -70,11 +70,11 @@ OCTET *modifImage(OCTET *Img, int dimDep, int dimObjectif)
 
 void constructionBase(int tailleBase, int h, int w)
 {
-  int taille, width, height; 
-  double moyenne, variance ;
+  int taille, width, height;
+  double moyenne, variance;
   char *ndg = "ndg.pgm";
-  char* num ;
-  OCTET *Img ;
+  char *num;
+  OCTET *Img;
   for (size_t i = 1; i <= tailleBase; i++)
   {
     asprintf(&num, "%d", i);
@@ -89,7 +89,6 @@ void constructionBase(int tailleBase, int h, int w)
     strcat(strOut, num);
     strcat(strOut, ndg);
 
-
     lire_nb_lignes_colonnes_image_pgm((char *)strIn, &height, &width);
     taille = width * height;
     allocation_tableau(Img, OCTET, taille);
@@ -102,73 +101,73 @@ void constructionBase(int tailleBase, int h, int w)
     v.push_back(variance);
     ecrire_image_pgm((char *)strOut, base[i - 1], h, w);
     free(Img);
-  } 
-
+  }
 }
 
 void constructionBaseCouleur(int tailleBase, int h, int w)
 {
-  int taille, width, height; 
-  double moyenneR, varianceR, moyenneV, varianceV, moyenneB, varianceB ;
+  int taille, width, height;
+  double moyenneR, varianceR, moyenneV, varianceV, moyenneB, varianceB;
   char *ndg = "Couleur.ppm";
-  char* num ;
-  OCTET *Img, *ImgOut ;
-  OCTET *ImgR, *ImgV, *ImgB ;
+  char *num;
+  OCTET *Img, *ImgOut;
+  OCTET *ImgR, *ImgV, *ImgB;
   for (size_t i = 1; i <= tailleBase; i++)
   {
     asprintf(&num, "%d", i);
 
     char strIn[80];
-    strcpy(strIn, "base");
+    strcpy(strIn, "./bddPPM/base");
     strcat(strIn, num);
     strcat(strIn, ndg);
 
     char strOut[80];
-    strcpy(strOut, "sortie");
+    strcpy(strOut, "./bddPPM/sortie");
     strcat(strOut, num);
     strcat(strOut, ndg);
 
-
     lire_nb_lignes_colonnes_image_ppm((char *)strIn, &height, &width);
     taille = width * height;
-    allocation_tableau(Img, OCTET, taille*3);
-    allocation_tableau(ImgOut, OCTET, taille*3);
-    allocation_tableau(ImgR, OCTET, taille) ;
-    allocation_tableau(ImgV, OCTET, taille) ;
-    allocation_tableau(ImgB, OCTET, taille) ;
+    allocation_tableau(Img, OCTET, taille * 3);
+    allocation_tableau(ImgOut, OCTET, taille * 3);
+    allocation_tableau(ImgR, OCTET, taille);
+    allocation_tableau(ImgV, OCTET, taille);
+    allocation_tableau(ImgB, OCTET, taille);
     lire_image_ppm((char *)strIn, Img, taille);
 
-    //RECUPERATION DES COMPOSANTES
-    for(int j = 0 ; j<taille ; j++){
-      ImgR[j] = Img[3*j] ;
-      ImgV[j] = Img[3*j + 1] ;
-      ImgB[j] = Img[3*j + 2] ;
+    // RECUPERATION DES COMPOSANTES
+    for (int j = 0; j < taille; j++)
+    {
+      ImgR[j] = Img[3 * j];
+      ImgV[j] = Img[3 * j + 1];
+      ImgB[j] = Img[3 * j + 2];
     }
 
-    //MODIFICATION DES COMPOSANTES
+    // MODIFICATION DES COMPOSANTES
     ImgR = modifImage(ImgR, width, w);
     ImgV = modifImage(ImgV, width, w);
     ImgB = modifImage(ImgB, width, w);
 
-    //RECONSTRUCTION DE L'IMAGE
-    for(int j = 0 ; j<w*w ; j++){
-      ImgOut[3*j] = ImgR[j] ;
-      ImgOut[3*j+1] = ImgV[j] ;
-      ImgOut[3*j+2] = ImgB[j] ;
+    // RECONSTRUCTION DE L'IMAGE
+    for (int j = 0; j < w * w; j++)
+    {
+      ImgOut[3 * j] = ImgR[j];
+      ImgOut[3 * j + 1] = ImgV[j];
+      ImgOut[3 * j + 2] = ImgB[j];
     }
     base.push_back(ImgOut);
-    //base[i - 1] = modifImage(base[i - 1], width, w);
-    moyenneR = moy(ImgR, w*w);
+    // base[i - 1] = modifImage(base[i - 1], width, w);
+    moyenneR = moy(ImgR, w * w);
     mR.push_back(moyenneR);
-    varianceR = var(ImgR, w*w, moyenneR);
+    varianceR = var(ImgR, w * w, moyenneR);
     vR.push_back(varianceR);
-    moyenneV = moy(ImgV, w*w);
+    moyenneV = moy(ImgV, w * w);
     mV.push_back(moyenneV);
-    varianceV = var(ImgV, w*w, moyenneV);
+    varianceV = var(ImgV, w * w, moyenneV);
     vV.push_back(varianceV);
-    moyenneB = moy(ImgB, w*w);
+    moyenneB = moy(ImgB, w * w);
     mB.push_back(moyenneB);
-    varianceB = var(ImgB, w*w, moyenneB);
+    varianceB = var(ImgB, w * w, moyenneB);
     vB.push_back(varianceB);
     ecrire_image_ppm((char *)strOut, base[i - 1], h, w);
     free(Img);
@@ -251,7 +250,7 @@ void remplacerBloc(OCTET *ImgDepart, OCTET *ImgSortie, int tailleDep, int taille
       }
     }
   }
-} 
+}
 
 int choixImagetteCouleur(double &moyenneR, double &varianceR, double &moyenneV, double &varianceV, double &moyenneB, double &varianceB)
 {
@@ -262,18 +261,18 @@ int choixImagetteCouleur(double &moyenneR, double &varianceR, double &moyenneV, 
   std::vector<double> resultV(taille);
   std::vector<double> resultB(taille);
   std::vector<double> result(taille);
-  double maxDif, interDif, minDif ;
+  double maxDif, interDif, minDif;
   for (int i = 0; i < taille; i++)
   {
     resultR[i] = abs(mR[i] - moyenneR) * abs(mR[i] - moyenneR); //+ abs(v[i]-variance)*abs(v[i]-variance);
     resultV[i] = abs(mV[i] - moyenneV) * abs(mV[i] - moyenneV);
     resultB[i] = abs(mB[i] - moyenneB) * abs(mB[i] - moyenneB);
     maxDif = std::max(resultR[i], resultV[i]);
-    maxDif = std::max(maxDif, resultB[i]) ;
+    maxDif = std::max(maxDif, resultB[i]);
     minDif = std::min(resultR[i], resultV[i]);
     minDif = std::min(minDif, resultV[i]);
-    interDif = resultR[i] + resultV[i] + resultB[i] - maxDif - minDif ;
-    result[i] = 3*maxDif + 2*interDif + minDif ;
+    interDif = resultR[i] + resultV[i] + resultB[i] - maxDif - minDif;
+    result[i] = 3 * maxDif + 2 * interDif + minDif;
   }
 
   int indice = 1;
@@ -298,7 +297,7 @@ void remplacerBlocCouleur(OCTET *ImgDepart, OCTET *ImgSortie, int tailleDep, int
   double moyenneR, varianceR, moyenneV, varianceV, moyenneB, varianceB;
   OCTET *imagette;
   int indBase;
-  int index = 0 ;
+  int index = 0;
   for (int i = 0; i < nbBlocY; i++)
   {
     for (int j = 0; j < nbBlocX; j++)
@@ -317,9 +316,9 @@ void remplacerBlocCouleur(OCTET *ImgDepart, OCTET *ImgSortie, int tailleDep, int
       {
         for (int l = xDebut; l < xFin; l++)
         {
-          moyenneR += ImgDepart[(k * tailleDep + l)*3];
-          moyenneV += ImgDepart[(k * tailleDep + l)*3 + 1];
-          moyenneB += ImgDepart[(k * tailleDep + l)*3 + 2];
+          moyenneR += ImgDepart[(k * tailleDep + l) * 3];
+          moyenneV += ImgDepart[(k * tailleDep + l) * 3 + 1];
+          moyenneB += ImgDepart[(k * tailleDep + l) * 3 + 2];
         }
       }
       moyenneR = (double)moyenneR / (tailleImagette * tailleImagette);
@@ -329,9 +328,9 @@ void remplacerBlocCouleur(OCTET *ImgDepart, OCTET *ImgSortie, int tailleDep, int
       {
         for (int l = xDebut; l < xFin; l++)
         {
-          varianceR += (ImgDepart[(k * tailleDep + l)*3] - moyenneR) * (ImgDepart[(k * tailleDep + l)*3] - moyenneR);
-          varianceV += (ImgDepart[(k * tailleDep + l)*3 + 1] - moyenneV) * (ImgDepart[(k * tailleDep + l)*3 + 1] - moyenneV);
-          varianceB += (ImgDepart[(k * tailleDep + l)*3 + 2] - moyenneB) * (ImgDepart[(k * tailleDep + l)*3 + 2] - moyenneB);
+          varianceR += (ImgDepart[(k * tailleDep + l) * 3] - moyenneR) * (ImgDepart[(k * tailleDep + l) * 3] - moyenneR);
+          varianceV += (ImgDepart[(k * tailleDep + l) * 3 + 1] - moyenneV) * (ImgDepart[(k * tailleDep + l) * 3 + 1] - moyenneV);
+          varianceB += (ImgDepart[(k * tailleDep + l) * 3 + 2] - moyenneB) * (ImgDepart[(k * tailleDep + l) * 3 + 2] - moyenneB);
         }
       }
       varianceR = (double)varianceR / (tailleImagette * tailleImagette);
@@ -339,27 +338,110 @@ void remplacerBlocCouleur(OCTET *ImgDepart, OCTET *ImgSortie, int tailleDep, int
       varianceB = (double)varianceB / (tailleImagette * tailleImagette);
       indBase = choixImagetteCouleur(moyenneR, varianceR, moyenneV, varianceV, moyenneB, varianceB);
       imagette = base[indBase];
-     
+
       for (int k = yDebut; k < yFin; k++)
       {
         for (int l = xDebut; l < xFin; l++)
         {
           indice = (k - yDebut) * tailleImagette + (l - xDebut);
-          ImgSortie[3*(k * tailleDep + l)] = imagette[3*indice];
-          ImgSortie[3*(k * tailleDep + l)+1] = imagette[3*indice+1];
-          ImgSortie[3*(k * tailleDep + l)+2] = imagette[3*indice+2];
+          ImgSortie[3 * (k * tailleDep + l)] = imagette[3 * indice];
+          ImgSortie[3 * (k * tailleDep + l) + 1] = imagette[3 * indice + 1];
+          ImgSortie[3 * (k * tailleDep + l) + 2] = imagette[3 * indice + 2];
         }
-      } 
+      }
     }
   }
 }
 
+void UneImageEnQuatre(OCTET *ImgIn, OCTET *&ImgHautGauche, OCTET *&ImgHautDroite, OCTET *&ImgBasGauche, OCTET *&ImgBasDroite, int nW, int nH)
+{
+
+  for (size_t i = 0; i < nW / 2; i++)
+  {
+    for (size_t j = 0; j < nH / 2; j++)
+    {
+      ImgHautGauche[3 * (i * (nW / 2) + j)] = ImgIn[3 * (i * nW + j)];
+      ImgHautGauche[3 * (i * (nW / 2) + j) + 1] = ImgIn[3 * (i * nW + j) + 1];
+      ImgHautGauche[3 * (i * (nW / 2) + j) + 2] = ImgIn[3 * (i * nW + j) + 2];
+    }
+  }
+
+  for (size_t i = 0; i < nW / 2; i++)
+  {
+    for (size_t j = 0; j < nH / 2; j++)
+    {
+      ImgHautDroite[3 * (i * (nW / 2) + j)] = ImgIn[3 * ((i)*nW + j + nW / 2)];
+      ImgHautDroite[3 * (i * (nW / 2) + j) + 1] = ImgIn[3 * ((i)*nW + j + nW / 2) + 1];
+      ImgHautDroite[3 * (i * (nW / 2) + j) + 2] = ImgIn[3 * ((i)*nW + j + nW / 2) + 2];
+    }
+  }
+
+  for (size_t i = 0; i < nW / 2; i++)
+  {
+    for (size_t j = 0; j < nH / 2; j++)
+    {
+      ImgBasGauche[3 * (i * (nW / 2) + j)] = ImgIn[3 * ((i + nW / 2) * nW + j)];
+      ImgBasGauche[3 * (i * (nW / 2) + j) + 1] = ImgIn[3 * ((i + nW / 2) * nW + j) + 1];
+      ImgBasGauche[3 * (i * (nW / 2) + j) + 2] = ImgIn[3 * ((i + nW / 2) * nW + j) + 2];
+    }
+  }
+
+  for (size_t i = 0; i < nW / 2; i++)
+  {
+    for (size_t j = 0; j < nH / 2; j++)
+    {
+      ImgBasDroite[3 * ((i * (nW / 2)) + j)] = ImgIn[3 * ((i + nW / 2) * nW + j + nW / 2)];
+      ImgBasDroite[3 * ((i * (nW / 2)) + j) + 1] = ImgIn[3 * ((i + nW / 2) * nW + j + nW / 2) + 1];
+      ImgBasDroite[3 * ((i * (nW / 2)) + j) + 2] = ImgIn[3 * ((i + nW / 2) * nW + j + nW / 2) + 2];
+    }
+  }
+}
+
+OCTET *QuatresImagesEnUne(OCTET *ImgHautGauche, OCTET *ImgHautDroite, OCTET *ImgBasGauche, OCTET *ImgBasDroite, int WFinale, int HFinale)
+{
+
+  OCTET *ImgOut;
+  allocation_tableau(ImgOut, OCTET, WFinale * HFinale);
+
+  for (size_t i = 0; i < WFinale / 2; i++)
+  {
+    for (size_t j = 0; j < HFinale / 2; j++)
+    {
+      ImgOut[i * WFinale + j] = ImgHautGauche[i * (WFinale / 2) + j];
+    }
+  }
+  for (size_t i = 0; i < WFinale / 2; i++)
+  {
+    for (size_t j = 0; j < HFinale / 2; j++)
+    {
+      ImgOut[(i)*WFinale + j + WFinale / 2] = ImgHautDroite[i * (WFinale / 2) + j];
+    }
+  }
+
+  for (size_t i = 0; i < WFinale / 2; i++)
+  {
+    for (size_t j = 0; j < HFinale / 2; j++)
+    {
+      ImgOut[(i + WFinale / 2) * WFinale + j] = ImgBasGauche[i * (WFinale / 2) + j];
+    }
+  }
+  for (size_t i = 0; i < WFinale / 2; i++)
+  {
+    for (size_t j = 0; j < HFinale / 2; j++)
+    {
+      ImgOut[(i + WFinale / 2) * WFinale + j + WFinale / 2] = ImgBasDroite[i * (WFinale / 2) + j];
+    }
+  }
+  return ImgOut;
+}
 
 int main(int argc, char *argv[])
 {
-  int taille_des_imagettes=16;
-  //constructionBase(24, taille_des_imagettes, taille_des_imagettes);
-  constructionBaseCouleur(24, taille_des_imagettes, taille_des_imagettes);
+  int taille_des_imagettes = 2;
+  // constructionBase(24, taille_des_imagettes, taille_des_imagettes);
+  constructionBaseCouleur(1008, taille_des_imagettes, taille_des_imagettes);
+  
+
   int length = base.size();
 
   char cNomImgLue[250], cNomImgEcrite[250];
@@ -377,23 +459,56 @@ int main(int argc, char *argv[])
   OCTET *ImgIn, *ImgOut;
 
   lire_nb_lignes_colonnes_image_ppm(cNomImgLue, &nH, &nW);
-  //lire_nb_lignes_colonnes_image_pgm(cNomImgLue, &nH, &nW);
+  // lire_nb_lignes_colonnes_image_pgm(cNomImgLue, &nH, &nW);
   nTaille = nH * nW;
-  nTaille3 = 3*nTaille ;
+  nTaille3 = 3 * nTaille;
 
   allocation_tableau(ImgIn, OCTET, nTaille3);
-  //allocation_tableau(ImgIn, OCTET, nTaille);
+  // allocation_tableau(ImgIn, OCTET, nTaille);
 
-  //lire_image_pgm(cNomImgLue, ImgIn, nH * nW);
+  // lire_image_pgm(cNomImgLue, ImgIn, nH * nW);
   lire_image_ppm(cNomImgLue, ImgIn, nH * nW);
   allocation_tableau(ImgOut, OCTET, nTaille3);
-  
-  remplacerBlocCouleur(ImgIn, ImgOut, 512, taille_des_imagettes);
-  //remplacerBloc(ImgIn, ImgOut, 512, taille_des_imagettes);
 
-  ecrire_image_ppm(cNomImgEcrite, ImgOut, nH, nW);
-  //ecrire_image_ppm((char*)"TESTindice.ppm", base[1], taille_des_imagettes, taille_des_imagettes);
-  //ecrire_image_ppm((char*)"TESTindice.ppm", base[0], taille_des_imagettes, taille_des_imagettes);
+  OCTET *HautGauche;
+  OCTET *HautDroit;
+  OCTET *BasGauche;
+  OCTET *BasDroit;
+  allocation_tableau(HautGauche, OCTET, nTaille3 / 4);
+  allocation_tableau(HautDroit, OCTET, nTaille3 / 4);
+  allocation_tableau(BasGauche, OCTET, nTaille3 / 4);
+  allocation_tableau(BasDroit, OCTET, nTaille3 / 4);
+/* 
+  UneImageEnQuatre(ImgIn, HautGauche, HautDroit, BasGauche, BasDroit, nW, nH);
+  std::vector<OCTET*> baseQuarts;
+  for (size_t i = 0; i < 1002; i++)
+  {
+    std::cout<<i<<std::endl;
+    OCTET *hg;
+    OCTET *hd;
+    OCTET *bg;
+    OCTET *bd;
+    allocation_tableau(hg, OCTET, nTaille3 / 4);
+    allocation_tableau(hd, OCTET, nTaille3 / 4);
+    allocation_tableau(bg, OCTET, nTaille3 / 4);
+    allocation_tableau(bd, OCTET, nTaille3 / 4);
+
+    UneImageEnQuatre(base[i], hg, hd, bg, bd, nW, nH);
+    baseQuarts.push_back(hg);
+    baseQuarts.push_back(hd);
+    baseQuarts.push_back(bg);
+    baseQuarts.push_back(bd);
+  }
+
+  base=baseQuarts;
+  */
+  
+  remplacerBlocCouleur(ImgIn, ImgOut, 256, taille_des_imagettes);
+  // remplacerBloc(ImgIn, ImgOut, 512, taille_des_imagettes);
+  
+  ecrire_image_ppm(cNomImgEcrite, ImgOut, nH , nW );
+  // ecrire_image_ppm((char*)"TESTindice.ppm", base[1], taille_des_imagettes, taille_des_imagettes);
+  // ecrire_image_ppm((char*)"TESTindice.ppm", base[0], taille_des_imagettes, taille_des_imagettes);
 
   return 1;
 }
