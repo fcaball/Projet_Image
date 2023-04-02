@@ -454,19 +454,6 @@ OCTET* conversionRGBtoNDG(OCTET* ImgCouleur, OCTET* ImgNdg, int taille){
   return ImgNdg ;
 }
 
-
-OCTET* conversionGradient(OCTET* ImgNDG, OCTET* gradient, int w, int h){
-  int Ii, Ij ;
-  for(int i = 0 ; i<h-1 ; i++){
-    for(int j = 0 ; j<w-1 ; j++){
-        Ij = ImgNDG[i*w + j+1] - ImgNDG[i*w + j];
-        Ii = ImgNDG[(i+1)*w + j] - ImgNDG[i*w + j];
-        gradient[i*w + j] = sqrt(Ii*Ii + Ij*Ij);
-    }
-   }
-   return gradient ;
-}
-
 OCTET* seuilAuto(OCTET* ImgGradient, OCTET* sortie, int taille){
   int max = 0 ;
   for(int i = 0 ; i<taille ; i++){
@@ -474,7 +461,7 @@ OCTET* seuilAuto(OCTET* ImgGradient, OCTET* sortie, int taille){
       max = ImgGradient[i];
     }
   }
-  int seuil = max/3 ;
+  int seuil = max/2 ;
   for(int i = 0 ; i<taille ; i++){
     if(ImgGradient[i]>seuil){
       sortie[i] = 255 ;
@@ -485,6 +472,67 @@ OCTET* seuilAuto(OCTET* ImgGradient, OCTET* sortie, int taille){
   }
   return sortie ;
 }
+
+OCTET* conversionGradient(OCTET* ImgNDG, OCTET* gradient, int w, int h){
+  int Ii, Ij ;
+  for(int i = 0 ; i<h-1 ; i++){
+    for(int j = 0 ; j<w-1 ; j++){
+        Ij = ImgNDG[i*w + j+1] - ImgNDG[i*w + j];
+        Ii = ImgNDG[(i+1)*w + j] - ImgNDG[i*w + j];
+        gradient[i*w + j] = sqrt(Ii*Ii + Ij*Ij);
+    }
+   }
+   int* OCCGRIS;
+  allocation_tableau(OCCGRIS, int, 256);
+   //FILE* histo=fopen("./histo.dat","w");
+    for (int i=0; i < h; i++)
+    for (int j=0; j < w; j++)
+        {
+            OCCGRIS[gradient[i*w+j]]+=1;
+        }
+    /* for(int i=0;i<256;i++){
+        fprintf(histo,"%d %d\n",i, OCCGRIS[i]);
+    } */
+    int min = 0 ;
+    int max = 255 ;
+    bool trouve = false ;
+    while((trouve == false)&&(min < 256)){
+        if(OCCGRIS[min] != 0){
+            trouve = true ;
+        }
+        else{
+            min++ ;
+        }
+    }
+    trouve = false ;
+    while((trouve == false)&&(max > 0)){
+        if(OCCGRIS[max] != 0){
+            trouve = true ;
+        }
+        else{
+            max-- ;
+        }
+    }
+    std::cout<<"min = "<<min<<std::endl ;
+    std::cout<<"max = "<<max<<std::endl ;
+    double alpha, beta ;
+    alpha = (-255 * min)/(max-min) ;
+    beta = 255/(max-min);
+    for(int i = 0 ; i<w*h ; i++){
+        gradient[i] = ((-255)/(max-min))*(min-gradient[i]);
+    }
+    /* for(int i = 0 ; i<w*h ; i++){
+      if(gradient[i]>150){
+        gradient[i] = 255 ;
+      }
+      else{
+        gradient[i] = 0 ;
+      }
+    }*/
+    //gradient = seuilAuto(gradient, gradient, w*h);  
+   return gradient ;
+}
+
 
 int indice(OCTET* imageGradient, int taille){
   int tailleBase = base.size() ;
@@ -562,7 +610,7 @@ int main(int argc, char *argv[])
     allocation_tableau(modifGradient, OCTET, 64*64);
     baseGradient[i] = conversionGradient(baseNdG[i], modifGradient, 64, 64);
   }
-
+  ecrire_image_pgm((char*)"testGradient.pgm", baseGradient[0], 64, 64);
   lire_nb_lignes_colonnes_image_ppm(cNomImgLue, &nH, &nW);
 
   allocation_tableau(ImgIn, OCTET, 128*128*3);
