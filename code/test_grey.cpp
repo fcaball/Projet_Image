@@ -670,7 +670,7 @@ int main(int argc, char *argv[])
 
   ecrire_image_pgm((char*) "caMarcheGradientSeuil.pgm", baseGradient[100], 64, 64); */
 
-
+  
 
   /* lire_nb_lignes_colonnes_image_ppm(cNomImgLue, &nH, &nW);
   //lire_nb_lignes_colonnes_image_pgm(cNomImgLue, &nH, &nW);
