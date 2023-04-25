@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Récupérer les arguments et les stocker dans un tableau
+args=("$@") 
+
+# Construire la commande convert avec la liste des arguments
+command="convert -delay 20 -loop 0"
+
+for arg in "${args[@]}"
+do
+  command+=" $arg"
+done
+
+command+=" ../migif.gif"
+
+# Exécuter la commande
+echo "Commande exécutée : $command"
+$command

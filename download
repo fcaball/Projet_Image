@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Chemin d'origine du fichier
+source_file="$1"
+
+# Chemin de destination du fichier (dossier de destination doit déjà exister)
+destination_file="$2"
+
+# Déplacer et renommer le fichier
+cp "$source_file" "$destination_file"
